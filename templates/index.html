@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Tools</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar Navigasi -->
+    <div class="sidebar">
+        <button id="btnHome" onclick="showPage('home')">🔍 Cek Stock</button>
+        <button id="btnMap" onclick="showPage('map')">➔ Input MAP</button>
+        <button id="btnCollect" onclick="showPage('collect')">📋 Collect Logbook</button>
+        <button id="btnReadLog" onclick="showPage('readlog')">📘 Read Logbook</button>
+        <button id="btnUnlock" onclick="showPage('unlock')">🔓 Unlock PDF</button>
+        <button id="btnPrinter" onclick="showPage('Printer')">🖨️ Printer</button>
+        <button id="btnCompress" onclick="showPage('compress')">🗜️ Kompres Foto</button>
+        <button id="btnEditPDF" onclick="showPage('editpdf')">✍️ Edit File Penyaluran</button>
+        <button id="btnPenyaluran" onclick="showPage('penyaluran')">📥 Penyaluran</button>
+        <button id="btnInOut" onclick="showPage('inout')">📥 In/Out</button>
+    </div>
+
+    <!-- Halaman Home -->
+    <div class="page active" style="padding-left: 10em;">
+        <h2>🔧 Faza Debug Tools</h2>
+        <p>Selamat datang di <strong>Faza Debug Tools</strong> – kumpulan alat bantu untuk debugging dan otomasi teknis.</p>
+
+        <div class="tool-card">
+            <div class="icon">📊</div>
+            <div class="title">Cek Stok LPG</div>
+            <div class="desc">Ambil data dari Google Sheet dan proses otomatis di Merchan Apps Pertamina (MAP).</div>
+        </div>
+        <div class="tool-card">
+            <div class="icon">🔓</div>
+            <div class="title">Unlock PDF</div>
+            <div class="desc">Membuka PDF terkunci dengan output langsung berbentuk zipfile.</div>
+        </div>
+        <div class="tool-card">
+            <div class="icon">📄</div>
+            <div class="title">Ekstraksi PDF Logbook</div>
+            <div class="desc">Ambil data dari PDF logbook dengan password dan tampilkan otomatis.</div>
+        </div>
+    </div>
+
+    <!-- Konten Halaman Lain -->
+    <div class="content">
+        <!-- Cek Stok -->
+        <div id="home" class="page">
+            <h1>Cek Stok LPG</h1>
+            <label for="sheetIndex">Worksheet ke-:</label>
+            <input type="number" id="sheetIndex" min="0" max="10" value="4"><br><br>
+            <button id="startButton" class="action-btn" onclick="startProcess()">Mulai Cek Stok</button>
+            <button class="action-btn" onclick="stopProcess()">Stop Proses</button>
+            <pre id="log_home">Menunggu proses dimulai...</pre>
+        </div>
+
+        <!-- Input MAP -->
+        <div id="map" class="page">
+            <h1>Buat Laporan MAP</h1>
+            <div class="form-group">
+              <label for="sheet_index">Sheet ke:</label>
+              <input type="number" id="sheet_index" min="0" max="10" value="5"><br><br>
+            </div>
+            <button class="action-btn" onclick="startMap()">Jalankan</button>
+            <button class="action-btn" onclick="stopMap()">Stop Proses</button>
+            <pre id="log_map">Menunggu proses map dimulai...</pre>
+        </div>
+
+        <!-- Collect Logbook -->
+        <div id="collect" class="page">
+            <h1>Collect Logbook</h1>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sheet_index_collect">Pilih sheet:</label>
+                <input type="number" id="sheet_index_collect" min="0" max="10" value="4"><br>
+              </div>
+              <div class="form-group">
+                <label for="month_select">Pilih Bulan:</label>
+                <select id="month_select">
+                    <option value="0">JAN</option>
+                    <option value="1">FEB</option>
+                    <option value="2">MAR</option>
+                    <option value="3" selected>APR</option>
+                    <option value="4">MEI</option>
+                    <option value="5">JUN</option>
+                    <option value="6">JUL</option>
+                    <option value="7">AGU</option>
+                    <option value="8">SEP</option>
+                    <option value="9">OKT</option>
+                    <option value="10">NOV</option>
+                    <option value="11">DES</option>
+                </select>
+              </div>
+            </div>
+            <br>
+            <button class="action-btn" onclick="startCollect()">Mulai Collect</button>
+            <button class="action-btn" onclick="stopCollect()">Stop Proses</button>
+            <pre id="log_collect">Menunggu proses collect dimulai...</pre>
+        </div>
+
+        <!-- Read Logbook -->
+        <div id="readlog" class="page">
+            <h1>📘 Baca Logbook PDF</h1>
+            <form id="uploadForm" method="POST" enctype="multipart/form-data"
+                style="margin-top: 1em; background: #fff; padding: 2em; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: 1em auto;">
+                <p><b>Upload file .zip berisi PDF Logbook:</b></p>
+                <input type="file" name="zipfile" accept=".zip" required><br><br>
+                <button type="submit" class="action-btn">🚀 Proses</button>
+                <button type="button" class="action-btn" onclick="clearLogbookData()">🧹 Clear Data</button>
+                <br>
+                <a href="/download" class="action-btn">⬇️ Unduh CSV</a>
+            </form>
+
+            <div id="resultArea">
+                {% if data %}
+                <div style="margin-top: 2em; max-width: 800px; margin: auto;">
+                    <h2>📄 Hasil Ekstraksi</h2>
+                    <div style="overflow-x:auto;">
+                        <table border="1" style="width: 100%; border-collapse: collapse; background: #fff; margin-top: 1em; border-radius: 8px; overflow: hidden;">
+                            <thead style="background-color: #28a745; color: white;">
+                                <tr>
+                                    <th>Nama File</th>
+                                    <th>Rumah Tangga</th>
+                                    <th>Usaha Mikro</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in data %}
+                                <tr style="text-align: center;">
+                                    <td>{{ row["Filename"] }}</td>
+                                    <td>{{ row["Rumah Tangga"] }}</td>
+                                    <td>{{ row["Usaha Mikro"] }}</td>
+                                    <td>{{ row["Total"] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div><br>
+                    <a href="/download" class="action-btn">⬇️ Unduh CSV</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Unlock PDF -->
+        <div id="unlock" class="page">
+            <h1>Unlock PDF Files</h1>
+            <input type="file" id="pdfs" accept=".pdf" multiple><br><br>
+            <form id="unlockForm" method="POST" action="/unlock" enctype="multipart/form-data">
+                <div id="fileList"></div>
+                <button type="submit" class="action-btn">Unlock PDF</button>
+            </form>
+        </div>
+
+        <!-- Printer -->
+        <div id="Printer" class="printer page">
+            <div class="section">
+                <h2>📤 Upload Dokumen</h2>
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                  <div class="custom-file-upload">
+                    <input type="file" name="files" multiple required>
+                  </div>
+                    <button type="submit" class="action-btn">Upload</button>
+                </form>
+                <a class="link" href="/files">📂 Lihat File Terupload</a>
+            </div>
+
+            <div class="section" style="text-align: left;">
+                <h2>🖨️ Informasi Printer</h2>
+                <p><strong>Printer Default:</strong> {{ default }}</p>
+                <ul class="printer-list">
+                    {% for p in printers %}
+                        <li>{{ p[2] }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Kompres Foto -->
+        <div id="compress" class="page">
+            <h1>🗜️ Kompresi Gambar</h1>
+            <form id="compressForm" method="POST" action="/compress-photo" enctype="multipart/form-data" 
+                style="background-color: #fff; border-radius: 2em;">
+                <label>Pilih Foto (.jpg/.png):</label><br>
+                <input type="file" name="photos" accept=".jpg,.jpeg,.png" multiple required><br><br>
+                <button type="submit" class="action-btn">🚀 Kompres</button>
+            </form>
+
+            {% if compressed %}
+            <div style="margin-top: 2em;">
+                <h2>📦 Hasil Kompresi</h2>
+                <ul>
+                    {% for row in compressed %}
+                        <li>
+                            {{ row.filename }} –
+                            <a href="/compressed/{{ row.filename }}" class="action-btn" target="_blank">⬇️ Unduh</a>
+                            <img src="/compressed/{{ row.filename }}" alt="{{ row.filename }}" style="max-width: 200px; max-height: 200px; display: block; margin-top: 0.5em;">
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Edit PDF -->
+        <div id="editpdf" class="page" style="padding-left: 200px;">
+            <h1 style="text-align: left;">✍️ Tambah Teks Automatis Pada PDF</h1>
+            <form id="editForm" action="/edit-pdf" method="POST" enctype="multipart/form-data" 
+                style="background: #fff; padding: 2em; border-radius: 1em; box-shadow: 0 0 10px #aaa; max-width: 600px;">
+                <label for="halaman">Pilih Halaman :</label>
+                <input type="number" name="halaman" value="2" min="1" required><br><br>
+                
+                <label for="pdf_files">Pilih PDF:</label><br>
+                <input type="file" name="pdf_files" accept=".pdf" multiple required><br><br>
+
+                <label for="agen">Agen:</label><br>
+                <input type="text" name="agen" value="PT Hasana Satya Utama" required><br><br>
+
+                <label for="nama">Nama:</label><br>
+                <input type="text" name="nama" value="Sudarwi" required><br><br>
+
+                <label for="jabatan">Jabatan:</label><br>
+                <input type="text" name="jabatan" value="Direktur" required><br><br>
+
+                <button type="submit" class="action-btn">🚀 Proses PDF</button>
+            </form>
+        </div>
+
+        <!-- Menu Penyaluran -->
+         <div id="penyaluran" class="page">
+            <h1>📥 Download Penyaluran</h1>
+
+            <form id="penyaluranForm" onsubmit="submitPenyaluran(event)">
+                <label>Username:</label>
+                <input type="text" id="penyaluran_username" required><br>
+
+                <label>Password:</label>
+                <input type="password" id="penyaluran_password" required><br><br>
+
+                <label>Jenis:</label><br>
+                <select id="penyaluran_jenis">
+                <option value="Fakultatif">Fakultatif</option>
+                <option value="Normal">Normal</option>
+                <option value="Semua (Normal + Fakultatif)">Semua</option>
+                </select><br><br>
+
+                <label>Bulan & Tahun (format SIMELON):</label><br>
+                <select id="penyaluran_bulan">
+                    <option value="2025-12|Des">Desember 2025</option>
+                    <option value="2025-11|Nov">November 2025</option>
+                    <option value="2025-10|Okt">Oktober 2025</option>
+                    <option value="2025-09|Sep">September 2025</option>
+                    <option value="2025-08|Aug">Agustus 2025</option>
+                    <option value="2025-07|Jul">Juli 2025</option>
+                    <option value="2025-06|Jun">Juni 2025</option>
+                    <option value="2025-05|Mei">Mei 2025</option>
+                    <option value="2025-04|Apr">April 2025</option>
+                    <option value="2025-03|Mar">Maret 2025</option>
+                    <option value="2025-02|Feb">Februari 2025</option>
+                    <option value="2025-01|Jan">Januari 2025</option>
+                </select><br><br>
+
+                <button type="submit" class="action-btn">Mulai Download</button>
+            </form>
+
+            <pre id="log_penyaluran">Menunggu input...</pre>
+        </div>
+
+        <!-- Download IN/OUT Agen -->
+         <div id="inout" class="page">
+            <h1>📥 Download In Out Agen</h1>
+            <form id="inoutForm" onsubmit="submitInOut(event)">
+                <label>Username: <input id="inout_username" type="text" required></label><br>
+                <label>Password: <input id="inout_password" type="password" required></label><br><br>
+                <label>Bulan: <br>
+                 <select id="inout_bulan">
+                    <option value="2025-12|Des">Desember 2025</option>
+                    <option value="2025-11|Nov">November 2025</option>
+                    <option value="2025-10|Okt">Oktober 2025</option>
+                    <option value="2025-09|Sep">September 2025</option>
+                    <option value="2025-08|Aug">Agustus 2025</option>
+                    <option value="2025-07|Jul">Juli 2025</option>
+                    <option value="2025-06|Jun">Juni 2025</option>
+                    <option value="2025-05|Mei">Mei 2025</option>
+                    <option value="2025-04|Apr">April 2025</option>
+                    <option value="2025-03|Mar">Maret 2025</option>
+                    <option value="2025-02|Feb">Februari 2025</option>
+                    <option value="2025-01|Jan">Januari 2025</option>
+                </select><br><br>
+                </label><br><br>
+                <button type="submit" class="action-btn">Mulai Download</button>
+            </form>
+            <pre id="log_inout">Menunggu input...</pre>
+        </div>
+
+    </div>
+
+    <div class="footer">&copy; Copyright 2025 - Syiham</div>
+
+    <!-- JS di akhir agar DOM sudah siap -->
+    <script src="/static/main.js"></script>
+
+    <!-- Global Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-popup">
+        <div class="spinner"></div>
+        <p>⏳ Memproses...</p>
+    </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>404 - Ayam Nyasar</title>
+  <style>
+    body {
+      margin: 0;
+      background: #e0f7fa;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 300px;
+      background: linear-gradient(to top, #a7ffeb, #ffffff);
+      border: 5px dashed #26c6da;
+      border-radius: 20px;
+      padding: 2em;
+      text-align: center;
+    }
+
+    .chicken {
+      font-size: 5em;
+      animation: wander 6s infinite;
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+    }
+
+    @keyframes wander {
+      0% { left: 0; transform: rotate(0deg); }
+      25% { transform: rotate(10deg); }
+      50% { left: 80%; transform: rotate(-10deg); }
+      75% { transform: rotate(10deg); }
+      100% { left: 0; transform: rotate(0deg); }
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0;
+      color: #ff7043;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-top: 0.5em;
+      color: #424242;
+    }
+
+    a {
+      margin-top: 1.5em;
+      display: inline-block;
+      padding: 0.7em 2em;
+      background: #ff7043;
+      color: white;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    a:hover {
+      background: #e64a19;
+    }
+
+    .speech-bubble {
+      position: absolute;
+      top: 30px;
+      left: 50px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      max-width: 180px;
+      font-size: 0.9em;
+      color: #333;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="chicken">🐔</div>
+    <div class="speech-bubble">Kok jalannya buntu ya...?</div>
+    <h1>404 - Ayam Nyasar</h1>
+    <p>Sepertinya kamu salah jalan... kayak ayam ini 🐓</p>
+    <a href="/">🔙 Balik ke Beranda</a>
+  </div>
+</body>
+</html>

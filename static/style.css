@@ -1,0 +1,507 @@
+/* ========== Layout Utama ========== */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #343a40;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding-top: 2em;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 2em;
+  overflow-y: auto;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+}
+
+.page {
+  display: none;
+  width: 100%;
+  max-width: 950px;
+}
+
+.page.active {
+  display: block;
+}
+
+.printer {
+  display: none;
+  width: 100%;
+  text-align: left;
+}
+
+.buka-awal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  padding-left: 10em;
+}
+
+/* ========== Sidebar Button ========== */
+.sidebar button {
+  background: none;
+  color: white;
+  border: none;
+  padding: 1em;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+  background-color: #495057;
+  border-left: 4px solid #28a745;
+}
+
+/* ========== Tombol Aksi ========== */
+button.action-btn {
+  padding: 1em 2em;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button.action-btn:hover {
+  background-color: #218838;
+}
+
+/* ========== Umum ========== */
+button {
+  padding: 0.5rem 1rem;
+  background-color: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+a:hover {
+  background-color: #218838 !important;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ========== Elemen Pre untuk Log ========== */
+pre {
+  background: #111;
+  color: #0f0;
+  text-align: left;
+  margin-top: 1.5em;
+  padding: 1em;
+  height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+  max-width: 800px;
+}
+
+/* ========== Tabel ========== */
+table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* ========== Container & Form ========== */
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+  display: flex;
+  margin: 0;
+}
+
+input[type="file"] {
+  display: block;
+  margin: 0 auto 20px auto;
+}
+
+input[type="number"] {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  max-width: 30px;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  color: #495057;
+}
+input[type="password"] {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1.5em;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+  white-space: nowrap;
+}
+
+.form-group select {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: border-color 0.3s;
+}
+
+.form-group select:focus {
+  border-color: #28a745;
+  outline: none;
+}
+
+.form-group input[type="number"] {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: border-color 0.3s;
+}
+
+.form-group input[type="number"]:focus {
+  border-color: #28a745;
+  outline: none;
+}
+
+/* ========== Card Tools di Home ========== */
+.tool-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.tool-card:hover {
+  transform: scale(1.05);
+}
+
+.tool-card .icon {
+  font-size: 48px;
+  animation: bounce 2s infinite;
+}
+
+.tool-card .title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+.tool-card .desc {
+  font-size: 0.95rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* ========== File Row Unlock PDF ========== */
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.file-name {
+  font-weight: bold;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-password {
+  margin-left: 15px;
+}
+
+.file-password input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  min-width: 150px;
+}
+
+/* ========== Pemutar Musik Bawah ========== */
+.bottom-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #f9f9f9;
+  border-top: 1px solid #ccc;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', sans-serif;
+  height: 30px;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-controls button {
+  background-color: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.player-controls button:hover {
+  background-color: #005ecc;
+}
+
+.player-controls input[type="range"] {
+  width: 100px;
+}
+
+/* ========== Spinner ========== */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #0077ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* ========== Animasi ========== */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========== Footer ========== */
+.footer {
+  font-size: 0.9em;
+  color: #888;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  text-align: left;
+}
+
+/* ========== Loading Animasi ========== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-popup {
+  background-color: white;
+  padding: 2em;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.loading-popup .spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1em;
+}
+
+/* ========== Custom Upload File ========== */
+.custom-file-upload {
+  text-align: left;
+  margin: 1em auto;
+}
+
+.upload-label {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.upload-label:hover {
+  background-color: #0056b3;
+}
+
+.custom-file-upload input[type="file"] {
+  text-align: left;
+}
+
+/* === MOBILE FRIENDLY STYLING === */
+@media screen and (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0;
+    justify-content: space-around;
+  }
+
+  .sidebar button {
+    flex: 1;
+    font-size: 14px;
+    padding: 0.8em 1em;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .sidebar button.active {
+    border-bottom: 3px solid #28a745;
+    border-left: none;
+  }
+
+  .content {
+    padding: 1em;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  .tool-card {
+    margin-bottom: 1rem;
+  }
+
+  .file-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .file-password {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .bottom-player {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 1em;
+    gap: 10px;
+  }
+
+  .player-controls input[type="range"] {
+    width: 100%;
+  }
+
+  .form-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer {
+    font-size: 0.75em;
+    text-align: center;
+    padding: 1em;
+  }
+
+  table {
+    font-size: 0.85em;
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+}

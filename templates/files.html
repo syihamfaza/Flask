@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar File</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .file-container {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filename {
+            font-weight: bold;
+            color: #333;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .actions a, .actions button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .actions button {
+            background-color: #dc3545;
+        }
+        .actions a:hover,
+        .actions button:hover {
+            opacity: 0.9;
+        }
+        a.back {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h2>📂 File Siap Dicetak</h2>
+    <div class="actions">
+        <button onclick="printAll()">🖨️ Print Semua</button>
+        <form action="/delete_all" method="post" onsubmit="return confirm('Yakin ingin menghapus semua file?')">
+            <button type="submit">🗑️ Hapus Semua</button>
+        </form>
+    </div>
+
+    {% for file in files %}
+    <div class="file-container">
+        <div class="filename">{{ file }}</div>
+        <div class="actions">
+            <button onclick="printFile('{{ file }}')">🖨️ Print</button>
+            <a href="/files/{{ file }}" target="_blank">⬇️ Download</a>
+            <form action="/delete/{{ file }}" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Yakin hapus {{ file }}?')">❌ Hapus</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    <a class="back" href="/">⬅️ Kembali ke Beranda</a>
+    
+</body>
+<script>
+        function printFile(filename) {
+            fetch(`/print/${filename}`, {
+                method: 'POST',
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(err => {
+                alert("Gagal mencetak: " + err);
+            });
+        }
+
+        function printAll() {
+            if (!confirm("Yakin ingin mencetak semua file?")) return;
+
+            fetch('/print_all', {
+                method: 'POST',
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(err => {
+                alert("Gagal mencetak semua file: " + err);
+            });
+        }
+    </script>
+</html>
