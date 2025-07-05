@@ -1,0 +1,11 @@
+Flask
+pywin32
+pikepdf
+openpyxl
+pdfplumber
+selenium
+pyautogui
+csv-reader
+gspread oauth2client
+pdf2image pillow
+eventlet
