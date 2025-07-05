@@ -20,7 +20,7 @@ import win32print
 
 from check_stock import run_checker
 from map import run_map
-from AutoCollect import collect
+from Flask.AutoCollect import collect
 from menu_penyaluran import run_penyaluran
 from menu_InOut import run_inout
 

@@ -148,7 +148,7 @@
         <!-- Unlock PDF -->
         <div id="unlock" class="page">
             <h1>Unlock PDF Files</h1>
-            <input type="file" id="pdfs" accept=".pdf" multiple><br><br>
+            <input style="max-width: 50px;" type="file" id="pdfs" accept=".pdf" multiple><br><br>
             <form id="unlockForm" method="POST" action="/unlock" enctype="multipart/form-data">
                 <div id="fileList"></div>
                 <button type="submit" class="action-btn">Unlock PDF</button>
