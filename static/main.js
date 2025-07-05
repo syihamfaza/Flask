@@ -86,7 +86,7 @@ if (fileInput) {
                 <strong>${file.name}</strong><br>
                 <input type="hidden" name="files" value="${i}">
                 <input type="file" name="pdfs" style="display:none" data-index="${i}">
-                Password: <input type="password" name="passwords" required><br><br>
+                Password: <input type="text" name="passwords" required><br><br>
             `;
             fileList.appendChild(row);
         });

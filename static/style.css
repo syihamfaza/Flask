@@ -154,12 +154,14 @@ input[type="text"] {
   font-size: 1rem;
   border-radius: 5px;
   color: #495057;
+  max-width: 10em;
 }
 input[type="password"] {
   flex: 1;
   padding: 0.5rem;
   font-size: 1rem;
   border-radius: 5px;
+  max-width: 10em;
 }
 
 .form-group {
