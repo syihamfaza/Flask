@@ -24,12 +24,33 @@ function appendLog(target, message) {
     target.scrollTop = target.scrollHeight;
 }
 
+
+/* ===== Loading Animation ===== */
+function showLoading() {
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) overlay.style.display = "flex";
+}
+function hideLoading() {
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) overlay.style.display = "none";
+  currentProcess = null;
+}
+function stopProcessGlobal() {
+  if (currentProcess === "print") {
+    document.getElementById("printStatus").innerText += "\n⛔ Proses print dihentikan (manual)";
+  } else {
+    socket.emit("stop");
+  }
+  hideLoading();
+}
+
 /* ===== CEK STOK LPG ===== */
 function startProcess() {
     const index = parseInt(document.getElementById("sheetIndex").value);
     logHome.innerHTML = "⏳ Memulai proses...\n";
     startButton.disabled = true;
     socket.emit("start_check", { sheet_index: index });
+    showLoading();
 }
 function stopProcess() {
     socket.emit("stop");
@@ -100,15 +121,6 @@ if (fileInput) {
     });
 }
 
-/* ===== Loading Animation ===== */
-function showLoading() {
-  const overlay = document.getElementById("loadingOverlay");
-  if (overlay) overlay.style.display = "flex";
-}
-function hideLoading() {
-  const overlay = document.getElementById("loadingOverlay");
-  if (overlay) overlay.style.display = "none";
-}
 
 /* ===== READ LOGBOOK ===== */
 document.addEventListener("DOMContentLoaded", () => {

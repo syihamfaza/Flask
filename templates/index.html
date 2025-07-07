@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Debug Tools</title>
-    <link rel="stylesheet" href="/Flask/static/style.css">
+    <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 </head>
 <body>
@@ -301,13 +301,14 @@
     <div class="footer">&copy; Copyright 2025 - Syiham</div>
 
     <!-- JS di akhir agar DOM sudah siap -->
-    <script src="/Flask/static/main.js"></script>
+    <script src="/static/main.js"></script>
 
     <!-- Global Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
     <div class="loading-popup">
         <div class="spinner"></div>
         <p>⏳ Memproses...</p>
+        <button id="stopButton" onclick="stopProcessGlobal()" style="margin-top: 1em;">⛔ Stop Proses</button>
     </div>
     </div>
 </body>
