@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Debug Tools</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="../static/style.css">
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 </head>
 
@@ -22,6 +22,8 @@
         <button id="btnEditPDF" onclick="showPage('editpdf')">✍️ Edit File Penyaluran</button>
         <button id="btnPenyaluran" onclick="showPage('penyaluran')">📥 Penyaluran</button>
         <button id="btnInOut" onclick="showPage('inout')">📥 In/Out</button>
+        <button id="btnPickPage" onclick="showPage('pickpage')">📄 Ambil Halaman PDF</button>
+        <button id="btnMergePDF" onclick="showPage('mergepdf')">📑 Gabung PDF</button>
     </div>
 
     <!-- Halaman Home -->
@@ -301,12 +303,40 @@
             <pre id="log_inout">Menunggu input...</pre>
         </div>
 
+        <!-- Ambil Halaman PDF -->
+        <div id="pickpage" class="page">
+            <h2>📄 Ambil Halaman Tertentu dari PDF</h2>
+            <form id="ambil-halaman" method="POST" enctype="multipart/form-data">
+                <label>Upload PDF:</label><br>
+                <input type="file" name="pdf" required><br><br>
+                <label>Halaman yang diambil (contoh: 2,9):</label><br>
+                <input type="text" name="halaman" placeholder="Misal: 2,9" required><br><br>
+                <button type="submit" class="action-btn">Ambil Halaman</button>
+            </form>
+            <div id="resultArea2">
+                {% if result %}
+                <p>✅ Halaman berhasil diproses.</p>
+                <a href="{{ result }}">⬇️ Download Hasil</a>
+                {% endif %}
+            </div><br><br>
+        </div>
+
+        <!-- Merge PDF -->
+        <div id="mergepdf" class="page">
+            <h2>📑 Gabungkan Beberapa PDF</h2>
+            <form id="gabungForm" enctype="multipart/form-data">
+                <input type="file" name="pdfs" id="mergeInput" multiple accept=".pdf"><br><br>
+                <ul id="mergeList"></ul>
+                <button type="submit">Gabungkan PDF</button>
+            </form>
+        </div>
+
     </div>
 
     <div class="footer">&copy; Copyright 2025 - Syiham</div>
 
     <!-- JS di akhir agar DOM sudah siap -->
-    <script src="static/style.css"></script>
+    <script src="../static/main.js"></script>
 
     <!-- Global Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">

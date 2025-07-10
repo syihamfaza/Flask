@@ -507,3 +507,11 @@ input[type="password"] {
     display: block;
   }
 }
+
+.draggable {
+  padding: 5px;
+  margin: 2px 0;
+  background: #eee;
+  cursor: grab;
+  border: 1px solid #ccc;
+}

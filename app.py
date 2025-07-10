@@ -11,12 +11,13 @@ import pikepdf
 import pandas as pd
 from PIL import Image
 from pathlib import Path
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template,render_template_string, request, send_file
 from flask_socketio import SocketIO
 from werkzeug.utils import secure_filename
 from flask import jsonify, redirect
 import subprocess
 import win32print
+from PyPDF2 import PdfMerger
 
 from check_stock import run_checker
 from map import run_map
@@ -341,7 +342,58 @@ def handle_stop():
 def handle_disconnect():
     sid = request.sid
     process_control.pop(sid, None)
+    
+# ========== PDF Page Extraction ==========
+@app.route("/ambil-halaman", methods=["POST"])
+def ambil_halaman_pdf():
+    result_path = ""
+    pdf_file = request.files["pdf"]
+    halaman_input = request.form.get("halaman", "").replace(" ", "")
+    halaman_list = [int(h.strip()) - 1 for h in halaman_input.split(",") if h.strip().isdigit()]
+    filename = secure_filename(pdf_file.filename)
+    input_path = os.path.join(UPLOAD_FOLDER, filename)
+    output_filename = f"selected_pages_{filename}"
+    output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+    pdf_file.save(input_path)
 
+    # Ekstrak halaman
+    doc = fitz.open(input_path)
+    new_doc = fitz.open()
+    for i in halaman_list:
+        if 0 <= i < len(doc):
+            new_doc.insert_pdf(doc, from_page=i, to_page=i)
+    new_doc.save(output_path)
+    new_doc.close()
+    doc.close()
+
+    result_path = f"/unduh-halaman/{output_filename}"
+
+    # Kirim HTML kecil saja
+    return render_template_string("""
+        <div id="resultArea2">
+            <p>✅ Halaman berhasil diproses.</p>
+            <a href="{{ result }}" download>⬇️ Download Hasil</a>
+        </div>
+    """, result=result_path)
+    
+#Merge PDF Files
+@app.route("/gabung-pdf", methods=["POST"])
+def gabung_pdf():
+    files = request.files.getlist("pdfs")
+    order = request.form.getlist("order[]")  # nama file urut dari UI
+    file_dict = {f.filename: f for f in files}
+
+    merger = PdfMerger()
+    for filename in order:
+        file = file_dict.get(filename)
+        if file:
+            merger.append(file.stream)
+
+    output_path = os.path.join(OUTPUT_FOLDER, "gabungan.pdf")
+    merger.write(output_path)
+    merger.close()
+    return send_file(output_path, as_attachment=True)
+    
 # ========== Main ==========
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=5000, debug=False)
