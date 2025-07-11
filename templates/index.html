@@ -12,25 +12,37 @@
 <body>
     <!-- Sidebar Navigasi -->
     <div class="sidebar">
-        <button id="btnHome" onclick="showPage('home')">🔍 Cek Stock</button>
-        <button id="btnMap" onclick="showPage('map')">➔ Input MAP</button>
-        <button id="btnCollect" onclick="showPage('collect')">📋 Collect Logbook</button>
-        <button id="btnReadLog" onclick="showPage('readlog')">📘 Read Logbook</button>
-        <button id="btnUnlock" onclick="showPage('unlock')">🔓 Unlock PDF</button>
-        <button id="btnPrinter" onclick="showPage('Printer')">🖨️ Printer</button>
-        <button id="btnCompress" onclick="showPage('compress')">🗜️ Kompres Foto</button>
-        <button id="btnEditPDF" onclick="showPage('editpdf')">✍️ Edit File Penyaluran</button>
-        <button id="btnPenyaluran" onclick="showPage('penyaluran')">📥 Penyaluran</button>
-        <button id="btnInOut" onclick="showPage('inout')">📥 In/Out</button>
-        <button id="btnPickPage" onclick="showPage('pickpage')">📄 Ambil Halaman PDF</button>
-        <button id="btnMergePDF" onclick="showPage('mergepdf')">📑 Gabung PDF</button>
+        <div class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <aside class="sidebar">
+            <nav id="sidebarNav">
+                <button onclick="window.location.href='/game'">🏓 Game</button>
+                <button data-page="cek-stock">🔍 Cek Stock</button>
+                <button data-page="map">➔ Input MAP</button>
+                <button data-page="Printer">🖨️ Printer</button>
+                <button data-page="collect">📋 Collect Logbook</button>
+                <button data-page="readlog">📘 Read Logbook</button>
+                <button data-page="compress">🗜️ Kompres Foto</button>
+                <button data-page="unlock">🔓 Unlock PDF</button>
+                <button data-page="pickpage">📄 Ambil Halaman PDF</button>
+                <button data-page="mergepdf">📑 Gabung PDF</button>
+                <button data-page="editpdf">✍️ Edit File Penyaluran</button>
+                <button data-page="penyaluran">📥 Penyaluran</button>
+                <button data-page="inout">📥 In/Out</button>
+            </nav>
+        </aside>
     </div>
 
     <!-- Halaman Home -->
-    <div class="page active" style="padding-left: 10em;">
-        <h2>🔧 Faza Debug Tools</h2>
-        <p>Selamat datang di <strong>Faza Debug Tools</strong> – kumpulan alat bantu untuk debugging dan otomasi teknis.
-        </p>
+    <div class="page active" style="margin-left: 250px;">
+        <div class="left">
+            <h2>🔧 Faza Debug Tools</h2>
+            <p>Selamat datang di <strong>Faza Debug Tools</strong> – kumpulan alat bantu untuk debugging dan otomasi
+                teknis.</p>
+        </div>
 
         <div class="tool-card">
             <div class="icon">📊</div>
@@ -52,12 +64,12 @@
     <!-- Konten Halaman Lain -->
     <div class="content">
         <!-- Cek Stok -->
-        <div id="home" class="page">
+        <div id="cek-stock" class="page">
             <h1>Cek Stok LPG</h1>
             <label for="sheetIndex">Worksheet ke-:</label>
             <input type="number" id="sheetIndex" min="0" max="10" value="4"><br><br>
-            <button id="startButton" class="action-btn" onclick="startProcess()">Mulai Cek Stok</button>
-            <button class="action-btn" onclick="stopProcess()">Stop Proses</button>
+            <button id="startButton" onclick="startProcess()">Mulai Cek Stok</button>
+            <button onclick="stopProcess()">Stop Proses</button>
             <pre id="log_home">Menunggu proses dimulai...</pre>
         </div>
 
@@ -68,8 +80,8 @@
                 <label for="sheet_index">Sheet ke:</label>
                 <input type="number" id="sheet_index" min="0" max="10" value="5"><br><br>
             </div>
-            <button class="action-btn" onclick="startMap()">Jalankan</button>
-            <button class="action-btn" onclick="stopMap()">Stop Proses</button>
+            <button onclick="startMap()">Jalankan</button>
+            <button onclick="stopMap()">Stop Proses</button>
             <pre id="log_map">Menunggu proses map dimulai...</pre>
         </div>
 
@@ -100,22 +112,21 @@
                 </div>
             </div>
             <br>
-            <button class="action-btn" onclick="startCollect()">Mulai Collect</button>
-            <button class="action-btn" onclick="stopCollect()">Stop Proses</button>
+            <button onclick="startCollect()">Mulai Collect</button>
+            <button onclick="stopCollect()">Stop Proses</button>
             <pre id="log_collect">Menunggu proses collect dimulai...</pre>
         </div>
 
         <!-- Read Logbook -->
         <div id="readlog" class="page">
             <h1>📘 Baca Logbook PDF</h1>
-            <form id="uploadForm" method="POST" enctype="multipart/form-data"
-                style="margin-top: 1em; background: #fff; padding: 2em; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: 1em auto;">
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
                 <p><b>Upload file .zip berisi PDF Logbook:</b></p>
                 <input type="file" name="zipfile" accept=".zip" required><br><br>
-                <button type="submit" class="action-btn">🚀 Proses</button>
-                <button type="button" class="action-btn" onclick="clearLogbookData()">🧹 Clear Data</button>
+                <button type="submit">🚀 Proses</button>
+                <button type="button" onclick="clearLogbookData()">🧹 Clear Data</button>
                 <br>
-                <a href="/download" class="action-btn">⬇️ Unduh CSV</a>
+                <a href="/download">⬇️ Unduh CSV</a>
             </form>
 
             <div id="resultArea">
@@ -145,7 +156,6 @@
                             </tbody>
                         </table>
                     </div><br>
-                    <a href="/download" class="action-btn">⬇️ Unduh CSV</a>
                 </div>
                 {% endif %}
             </div>
@@ -153,25 +163,41 @@
 
         <!-- Unlock PDF -->
         <div id="unlock" class="page">
-            <h1>Unlock PDF Files</h1>
-            <input type="file" id="pdfs" accept=".pdf" multiple><br><br>
+            <h1>🔓 Unlock PDF Files</h1>
             <form id="unlockForm" method="POST" action="/unlock" enctype="multipart/form-data">
+                <input type="file" id="pdfs" accept=".pdf" multiple><br><br>
                 <div id="fileList"></div>
                 <button type="submit" class="action-btn">Unlock PDF</button>
             </form>
+
+            {% if failed_unlock %}
+            <div
+                style="margin-top: 2em; padding: 1em; background-color: #ffe6e6; border: 1px solid red; border-radius: 8px;">
+                <h3>⚠️ Gagal Unlock:</h3>
+                <ul>
+                    {% for f in failed_unlock %}
+                    <li>{{ f }}</li>
+                    {% endfor %}
+                </ul>
+                {% if download_link %}
+                <a href="{{ download_link }}" class="action-btn">⬇️ Unduh Hasil yang Berhasil</a>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
 
         <!-- Printer -->
         <div id="Printer" class="printer page">
             <div class="section">
-                <h2>📤 Upload Dokumen</h2>
+                <h1>📤 Upload Dokumen</h1>
                 <form action="/upload" method="POST" enctype="multipart/form-data">
                     <div class="custom-file-upload">
-                        <input type="file" name="files" multiple required>
+                        <input type="file" name="files" accept=".pdf" multiple required>
                     </div>
-                    <button type="submit" class="action-btn">Upload</button>
+                    <button type="submit">Upload</button><br><br>
+                    <a class="link" href="/files">📂 Lihat File Terupload</a>
                 </form>
-                <a class="link" href="/files">📂 Lihat File Terupload</a>
+
             </div>
 
             <div class="section" style="text-align: left;">
@@ -188,11 +214,10 @@
         <!-- Kompres Foto -->
         <div id="compress" class="page">
             <h1>🗜️ Kompresi Gambar</h1>
-            <form id="compressForm" method="POST" action="/compress-photo" enctype="multipart/form-data"
-                style="background-color: #fff; border-radius: 2em;">
+            <form id="compressForm" method="POST" action="/compress-photo" enctype="multipart/form-data">
                 <label>Pilih Foto (.jpg/.png):</label><br>
                 <input type="file" name="photos" accept=".jpg,.jpeg,.png" multiple required><br><br>
-                <button type="submit" class="action-btn">🚀 Kompres</button>
+                <button type="submit">🚀 Kompres</button>
             </form>
 
             {% if compressed %}
@@ -202,7 +227,7 @@
                     {% for row in compressed %}
                     <li>
                         {{ row.filename }} –
-                        <a href="/compressed/{{ row.filename }}" class="action-btn" target="_blank">⬇️ Unduh</a>
+                        <a href="/compressed/{{ row.filename }}" target="_blank">⬇️ Unduh</a>
                         <img src="/compressed/{{ row.filename }}" alt="{{ row.filename }}"
                             style="max-width: 200px; max-height: 200px; display: block; margin-top: 0.5em;">
                     </li>
@@ -213,10 +238,9 @@
         </div>
 
         <!-- Edit PDF -->
-        <div id="editpdf" class="page" style="padding-left: 200px;">
-            <h1 style="text-align: left;">✍️ Tambah Teks Automatis Pada PDF</h1>
-            <form id="editForm" action="/edit-pdf" method="POST" enctype="multipart/form-data"
-                style="background: #fff; padding: 2em; border-radius: 1em; box-shadow: 0 0 10px #aaa; max-width: 600px;">
+        <div id="editpdf" class="page">
+            <h1>✍️ Tambah Teks Automatis Pada PDF</h1>
+            <form id="editForm" action="/edit-pdf" method="POST" enctype="multipart/form-data">
                 <label for="halaman">Pilih Halaman :</label>
                 <input type="number" name="halaman" value="2" min="1" required><br><br>
 
@@ -232,7 +256,7 @@
                 <label for="jabatan">Jabatan:</label><br>
                 <input type="text" name="jabatan" value="Direktur" required><br><br>
 
-                <button type="submit" class="action-btn">🚀 Proses PDF</button>
+                <button type="submit">🚀 Proses PDF</button>
             </form>
         </div>
 
@@ -241,13 +265,17 @@
             <h1>📥 Download Penyaluran</h1>
 
             <form id="penyaluranForm" onsubmit="submitPenyaluran(event)">
-                <label>Username:</label>
-                <input type="text" id="penyaluran_username" required><br>
+                <div class="floating-group">
+                    <input type="text" id="penyaluran_username" name="username" placeholder=" " required>
+                    <label for="penyaluran_username">username</label>
+                </div>
 
-                <label>Password:</label>
-                <input type="password" id="penyaluran_password" required><br><br>
+                <div class="floating-group">
+                    <input type="password" id="penyaluran_password" name="password" placeholder=" " required>
+                    <label for="penyaluran_password">password</label>
+                </div>
 
-                <label>Jenis:</label><br>
+                <label>jenis</label><br>
                 <select id="penyaluran_jenis">
                     <option value="Fakultatif">Fakultatif</option>
                     <option value="Normal">Normal</option>
@@ -270,7 +298,7 @@
                     <option value="2025-01|Jan">Januari 2025</option>
                 </select><br><br>
 
-                <button type="submit" class="action-btn">Mulai Download</button>
+                <button type="submit">Mulai Download</button>
             </form>
 
             <pre id="log_penyaluran">Menunggu input...</pre>
@@ -280,8 +308,16 @@
         <div id="inout" class="page">
             <h1>📥 Download In Out Agen</h1>
             <form id="inoutForm" onsubmit="submitInOut(event)">
-                <label>Username: <input id="inout_username" type="text" required></label><br>
-                <label>Password: <input id="inout_password" type="password" required></label><br><br>
+                <div class="floating-group">
+                    <input type="text" id="inout_username" name="username" placeholder=" " required>
+                    <label for="penyaluran_username">username</label>
+                </div>
+
+                <div class="floating-group">
+                    <input type="password" id="inout_password" name="password" placeholder=" " required>
+                    <label for="penyaluran_password">password</label>
+                </div>
+
                 <label>Bulan: <br>
                     <select id="inout_bulan">
                         <option value="2025-12|Des">Desember 2025</option>
@@ -298,7 +334,7 @@
                         <option value="2025-01|Jan">Januari 2025</option>
                     </select><br><br>
                 </label><br><br>
-                <button type="submit" class="action-btn">Mulai Download</button>
+                <button type="submit">Mulai Download</button>
             </form>
             <pre id="log_inout">Menunggu input...</pre>
         </div>
@@ -308,10 +344,10 @@
             <h2>📄 Ambil Halaman Tertentu dari PDF</h2>
             <form id="ambil-halaman" method="POST" enctype="multipart/form-data">
                 <label>Upload PDF:</label><br>
-                <input type="file" name="pdf" required><br><br>
+                <input type="file" name="pdf" accept=".pdf" required><br><br>
                 <label>Halaman yang diambil (contoh: 2,9):</label><br>
                 <input type="text" name="halaman" placeholder="Misal: 2,9" required><br><br>
-                <button type="submit" class="action-btn">Ambil Halaman</button>
+                <button type="submit">Ambil Halaman</button>
             </form>
             <div id="resultArea2">
                 {% if result %}
@@ -339,9 +375,13 @@
     <script src="../static/main.js"></script>
 
     <!-- Global Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-popup">
-            <div class="spinner"></div>
+            <div class="fancy-spinner">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="dot"></div>
+            </div>
             <p>⏳ Memproses...</p>
             <button id="stopButton" onclick="stopProcessGlobal()" style="margin-top: 1em;">⛔ Stop Proses</button>
         </div>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>🏓 Pong Multiplayer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style-game.css">
+</head>
+
+<body>
+    <h2 align="center">Multiplayer Pong</h2>
+    <div style="text-align: center;">
+        <button onclick="resetGame()">🔄 Reset Game</button>
+        <button><a href="/">Beranda</a></button>
+    </div><br>
+    <canvas id="game" width="600" height="400"></canvas>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='pong.js') }}"></script>
+</body>
+
+</html>

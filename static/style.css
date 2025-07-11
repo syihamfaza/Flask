@@ -1,14 +1,26 @@
 /* ========== Layout Utama ========== */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+body,
+html {
   margin: 0;
-  min-height: 100vh;
-  display: flex;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
+  background-color: #aad688;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
   width: 200px;
+  overflow-y: auto;
+  z-index: 1000;
   background-color: #343a40;
   color: white;
   display: flex;
@@ -17,38 +29,39 @@ body {
 }
 
 .content {
-  flex-grow: 1;
-  padding: 2em;
+  margin-left: 200px;
+  padding: 1em;
   overflow-y: auto;
+  height: 100vh;
+  position: relative;
   text-align: center;
-  justify-content: center;
-  display: flex;
+  padding-left: 5em;
 }
 
 .page {
   display: none;
   width: 100%;
   max-width: 950px;
+  justify-content: center;
+}
+
+.page h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
+  color: #333;
+  text-align: center;
 }
 
 .page.active {
   display: block;
+  align-items: center;
+  text-align: center;
 }
 
 .printer {
   display: none;
   width: 100%;
   text-align: left;
-}
-
-.buka-awal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  padding-left: 10em;
 }
 
 /* ========== Sidebar Button ========== */
@@ -61,12 +74,17 @@ body {
   font-size: 16px;
   cursor: pointer;
   border-left: 4px solid transparent;
+  width: 100%;
 }
 
 .sidebar button:hover,
 .sidebar button.active {
   background-color: #495057;
   border-left: 4px solid #28a745;
+}
+
+.sidebar button:focus {
+  outline: 2px solid #28a745;
 }
 
 /* ========== Tombol Aksi ========== */
@@ -84,16 +102,20 @@ button.action-btn:hover {
   background-color: #218838;
 }
 
-/* ========== Umum ========== */
 button {
   padding: 0.5rem 1rem;
-  background-color: #0077ff;
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
 }
 
+button:hover {
+  background-color: #218838;
+}
+
+/* ========== Elemen Lain ========== */
 a:hover {
   background-color: #218838 !important;
 }
@@ -102,29 +124,29 @@ a:hover {
   display: none;
 }
 
-/* ========== Elemen Pre untuk Log ========== */
 pre {
   background: #111;
   color: #0f0;
   text-align: left;
   margin-top: 1.5em;
   padding: 1em;
-  height: 400px;
+  height: 250px;
   overflow-y: auto;
-  border-radius: 8px;
-  max-width: 800px;
+  border-radius: 10px;
+  max-width: 850px;
+  margin-bottom: 2em;
+  position: sticky;
+  margin-left: 4em;
+  box-shadow: 0 0 15px darkgreen;
 }
 
-/* ========== Tabel ========== */
 table tr:hover {
   background-color: #f1f1f1;
 }
 
-/* ========== Container & Form ========== */
 .container {
   max-width: 700px;
   margin: auto;
-  background: white;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -133,35 +155,34 @@ table tr:hover {
 .form-section {
   display: flex;
   margin: 0;
+  justify-content: center;
 }
 
+/* ========== Input ========== */
 input[type="file"] {
   display: block;
   margin: 0 auto 20px auto;
 }
 
-input[type="number"] {
-  flex: 1;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 5px;
-  max-width: 30px;
-}
-
-input[type="text"] {
-  flex: 1;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 5px;
-  color: #495057;
-  max-width: 10em;
-}
+input[type="number"],
+input[type="text"],
 input[type="password"] {
   flex: 1;
   padding: 0.5rem;
   font-size: 1rem;
   border-radius: 5px;
   max-width: 10em;
+  color: #495057;
+}
+
+.page form {
+  background-color: #8bbd78;
+  padding: 2em;
+  border-radius: 1em;
+  max-width: 800px;
+  justify-content: center;
+  box-shadow: 0 0 10px #47894b;
+  margin-left: 5em;
 }
 
 .form-group {
@@ -170,6 +191,17 @@ input[type="password"] {
   justify-content: center;
   gap: 12px;
   margin-bottom: 1.5em;
+  position: relative;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 10px;
+  font-size: 1em;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  outline: none;
 }
 
 .form-group label {
@@ -177,34 +209,39 @@ input[type="password"] {
   font-size: 1rem;
   color: #333;
   white-space: nowrap;
+  position: absolute;
+  transition: 0.3s;
+  pointer-events: none;
 }
 
-.form-group select {
+.form-group input:focus+label,
+.form-group input:not(:placeholder-shown)+label {
+  top: -8px;
+  left: 10px;
+  font-size: 0.75em;
+  color: green;
+}
+
+select {
   padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: border-color 0.3s;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #999;
+  margin-bottom: 20px;
+  width: 250px;
 }
 
-.form-group select:focus {
-  border-color: #28a745;
-  outline: none;
-}
-
+.form-group select,
 .form-group input[type="number"] {
   padding: 10px;
   font-size: 1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
-  width: 100px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: border-color 0.3s;
 }
 
+.form-group select:focus,
 .form-group input[type="number"]:focus {
   border-color: #28a745;
   outline: none;
@@ -212,12 +249,13 @@ input[type="password"] {
 
 /* ========== Card Tools di Home ========== */
 .tool-card {
-  background: white;
+  background: #98c377;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.3s;
+  box-shadow: 2px 4px 8px #47894b;
 }
 
 .tool-card:hover {
@@ -237,7 +275,7 @@ input[type="password"] {
 
 .tool-card .desc {
   font-size: 0.95rem;
-  color: #666;
+  color: whitesmoke;
   margin-top: 8px;
 }
 
@@ -246,7 +284,7 @@ input[type="password"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f9f9f9;
+  background: #fffba0;
   padding: 12px 15px;
   border-radius: 6px;
   margin-bottom: 10px;
@@ -272,114 +310,27 @@ input[type="password"] {
   min-width: 150px;
 }
 
-/* ========== Pemutar Musik Bawah ========== */
-.bottom-player {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #f9f9f9;
-  border-top: 1px solid #ccc;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-  font-family: 'Inter', sans-serif;
-  height: 30px;
-}
-
-.player-info {
-  display: flex;
-  flex-direction: column;
-  font-size: 14px;
-  max-width: 60%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.player-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.player-controls button {
-  background-color: #0077ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.player-controls button:hover {
-  background-color: #005ecc;
-}
-
-.player-controls input[type="range"] {
-  width: 100px;
-}
-
 /* ========== Spinner ========== */
 .spinner {
   width: 20px;
   height: 20px;
-  border: 3px solid #ccc;
-  border-top: 3px solid #0077ff;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   display: inline-block;
   margin-right: 10px;
 }
 
-/* ========== Animasi ========== */
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ========== Footer ========== */
-.footer {
-  font-size: 0.9em;
-  color: #888;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  text-align: left;
-}
-
-/* ========== Loading Animasi ========== */
+/* ========== Loading ========== */
 .loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.3);
   z-index: 9999;
   display: none;
   align-items: center;
@@ -388,23 +339,59 @@ input[type="password"] {
 
 .loading-popup {
   background-color: white;
-  padding: 2em;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  padding: 2em 3em;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   text-align: center;
+  animation: fadeIn 0.4s ease-out;
 }
 
-.loading-popup .spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007bff;
+.fancy-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5em auto;
+}
+
+.fancy-spinner .ring {
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 4px solid transparent;
+  border-top-color: #28a745;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1em;
+  animation: spinRing 1.2s linear infinite;
 }
 
-/* ========== Custom Upload File ========== */
+.fancy-spinner .ring:nth-child(2) {
+  border: 4px solid transparent;
+  border-bottom-color: #007bff;
+  animation-delay: -0.6s;
+}
+
+.fancy-spinner .dot {
+  width: 12px;
+  height: 12px;
+  background: #28a745;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spinRing {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========== Upload File ========== */
 .custom-file-upload {
   text-align: left;
   margin: 1em auto;
@@ -429,41 +416,102 @@ input[type="password"] {
   text-align: left;
 }
 
-/* === MOBILE FRIENDLY STYLING === */
-@media screen and (max-width: 768px) {
+/* ========== Animasi ========== */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========== Drag & Drop ========== */
+.draggable {
+  padding: 5px;
+  margin: 2px 0;
+  background: #eee;
+  cursor: grab;
+  border: 1px solid #ccc;
+}
+
+/* ========== Toggle Menu ========== */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  margin: 1em;
+  z-index: 1100;
+  background-color: #343a40;
+  padding: 0.5em;
+}
+
+.menu-toggle span {
+  height: 3px;
+  background: white;
+  margin: 4px 0;
+  width: 25px;
+  border-radius: 2px;
+}
+
+/* ========== Responsive ========== */
+@media screen and (max-width: 528px) {
   body {
+    overflow: auto;
     flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  .left {
+    text-align: center;
+    margin-left: -15em;
+    max-width: 424px;
   }
 
   .sidebar {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
-    padding: 0;
+    padding: 0em;
     justify-content: space-around;
+    position: static;
+    text-align: left;
   }
 
   .sidebar button {
     flex: 1;
     font-size: 14px;
-    padding: 0.8em 1em;
+    padding: 0.5em 1em;
     border-left: none;
     border-bottom: 3px solid transparent;
+    text-align: left;
   }
 
   .sidebar button.active {
     border-bottom: 3px solid #28a745;
-    border-left: none;
+    border-left: 0;
   }
 
   .content {
+    margin-left: -1.2em;
     padding: 1em;
-    flex-direction: column;
-    overflow-x: hidden;
+    text-align: center;
+    max-width: 100%;
   }
 
   .tool-card {
     margin-bottom: 1rem;
+    margin-left: -14em;
+    width: calc(90%);
   }
 
   .file-row {
@@ -506,12 +554,53 @@ input[type="password"] {
     overflow-x: auto;
     display: block;
   }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  .sidebar nav {
+    display: none;
+  }
+
+  .sidebar nav.active {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
-.draggable {
-  padding: 5px;
-  margin: 2px 0;
-  background: #eee;
-  cursor: grab;
-  border: 1px solid #ccc;
+.floating-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.floating-group input {
+  width: 100%;
+  padding: 14px 12px;
+  font-size: 1em;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  outline: none;
+}
+
+.floating-group label {
+  position: absolute;
+  top: 14px;
+  left: 300px;
+  color: #666;
+  padding: 0 6px;
+  transition: 0.3s;
+  pointer-events: none;
+  background: whitesmoke;
+  border-radius: 5px;
+
+}
+
+.floating-group input:focus + label,
+.floating-group input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 300px;
+  font-size: 0.75em;
+  color: green;
 }

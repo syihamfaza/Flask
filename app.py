@@ -12,12 +12,13 @@ import pandas as pd
 from PIL import Image
 from pathlib import Path
 from flask import Flask, render_template,render_template_string, request, send_file
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 from werkzeug.utils import secure_filename
 from flask import jsonify, redirect
 import subprocess
 import win32print
 from PyPDF2 import PdfMerger
+import unicodedata
 
 from check_stock import run_checker
 from map import run_map
@@ -41,10 +42,13 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 socketio = SocketIO(app, async_mode='threading', cors_allowed_origins="*")
 process_control = {}
 
-# ========== Utility ==========
+# ========== Part of Read Logbook ==========
+def normalize_text(text):
+    return unicodedata.normalize("NFKD", text).replace("\xa0", " ").replace("\u200b", "")
+
 def extract_value(text, label):
-    pattern = rf"{re.escape(label)}\\s+(\\d+)\\s*Tbg"
-    match = re.search(pattern, text)
+    pattern = rf"{label}\D*(\d+)\s*Tbg"
+    match = re.search(pattern, text, re.IGNORECASE)
     return match.group(1).zfill(3) if match else "000"
 
 # ========== Routes ==========
@@ -58,17 +62,21 @@ def index():
 def page_not_found(e):
     return render_template("404.html"), 404
 
+# ========== Read Logbook ==========
 @app.route("/", methods=["GET", "POST"])
 def baca_logbook():
     data_rows = []
-    if request.method == "POST":
-        shutil.rmtree(UPLOAD_FOLDER)
-        os.makedirs(UPLOAD_FOLDER)
 
-        zip_file = request.files["zipfile"]
-        if zip_file.filename.endswith(".zip"):
+    if request.method == "POST":
+        # Hapus isi upload folder jika ada
+        shutil.rmtree(UPLOAD_FOLDER, ignore_errors=True)
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+        zip_file = request.files.get("zipfile")
+        if zip_file and zip_file.filename.endswith(".zip"):
             zip_path = os.path.join(UPLOAD_FOLDER, secure_filename(zip_file.filename))
             zip_file.save(zip_path)
+
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(UPLOAD_FOLDER)
             os.remove(zip_path)
@@ -80,6 +88,8 @@ def baca_logbook():
                     text = "".join([page.get_text() for page in doc])
                     doc.close()
 
+                    text = normalize_text(text)
+
                     data_rows.append({
                         "Filename": filename,
                         "Rumah Tangga": extract_value(text, "Rumah Tangga"),
@@ -87,6 +97,7 @@ def baca_logbook():
                         "Total": extract_value(text, "Total")
                     })
 
+            # Simpan ke CSV
             pd.DataFrame(data_rows).to_csv(OUTPUT_CSV, index=False)
 
     return render_template("index.html", data=data_rows)
@@ -95,6 +106,7 @@ def baca_logbook():
 def download():
     return send_file(OUTPUT_CSV, as_attachment=True)
 
+# ========== PDF Unlock ==========
 @app.route("/unlock", methods=['POST'])
 def unlock():
     passwords = request.form.getlist('passwords')
@@ -102,6 +114,8 @@ def unlock():
     session_id = str(uuid.uuid4())
     session_output = os.path.join(OUTPUT_FOLDER, session_id)
     os.makedirs(session_output, exist_ok=True)
+
+    failed_files = []
 
     for pdf_file, password in zip(pdf_files, passwords):
         filename = secure_filename(pdf_file.filename)
@@ -113,7 +127,9 @@ def unlock():
             with pikepdf.open(input_path, password=password) as pdf:
                 pdf.save(output_path)
         except pikepdf._qpdf.PasswordError:
-            continue
+            failed_files.append(filename)
+        except Exception as e:
+            failed_files.append(f"{filename} (error: {str(e)})")
 
     zip_path = os.path.join(OUTPUT_FOLDER, f"{session_id}.zip")
     with zipfile.ZipFile(zip_path, 'w') as zipf:
@@ -121,7 +137,13 @@ def unlock():
             for file in files:
                 zipf.write(os.path.join(root, file), arcname=file)
 
-    return send_file(zip_path, as_attachment=True)
+    if failed_files:
+        return render_template("index.html", failed_unlock=failed_files, download_link=f"/result/{session_id}.zip")
+    else:
+        return send_file(zip_path, as_attachment=True)
+@app.route("/result/<filename>")
+def result_file(filename):
+    return send_file(os.path.join(OUTPUT_FOLDER, filename), as_attachment=True)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -356,7 +378,6 @@ def ambil_halaman_pdf():
     output_path = os.path.join(OUTPUT_FOLDER, output_filename)
     pdf_file.save(input_path)
 
-    # Ekstrak halaman
     doc = fitz.open(input_path)
     new_doc = fitz.open()
     for i in halaman_list:
@@ -368,7 +389,6 @@ def ambil_halaman_pdf():
 
     result_path = f"/unduh-halaman/{output_filename}"
 
-    # Kirim HTML kecil saja
     return render_template_string("""
         <div id="resultArea2">
             <p>✅ Halaman berhasil diproses.</p>
@@ -376,7 +396,7 @@ def ambil_halaman_pdf():
         </div>
     """, result=result_path)
     
-#Merge PDF Files
+# ======== Merge PDF Files ==========
 @app.route("/gabung-pdf", methods=["POST"])
 def gabung_pdf():
     files = request.files.getlist("pdfs")
@@ -393,6 +413,72 @@ def gabung_pdf():
     merger.write(output_path)
     merger.close()
     return send_file(output_path, as_attachment=True)
+
+# ========== Game Multiplayer ==========
+players = {}
+ball = {"x": 300, "y": 200, "vx": 4, "vy": 3}
+paddles = {"left": 150, "right": 150}
+score = {"left": 0, "right": 0}
+
+@app.route("/game")
+def game():
+    return render_template("game.html")
+
+@socketio.on('connect')
+def handle_connect():
+    sid = request.sid
+    if "left" not in players.values():
+        players[sid] = "left"
+        emit('role', "left")
+    elif "right" not in players.values():
+        players[sid] = "right"
+        emit('role', "right")
+    else:
+        emit('role', "spectator")
+
+@socketio.on('paddle_move')
+def handle_paddle(data):
+    if players.get(request.sid) == "left":
+        paddles["left"] = data['y']
+    elif players.get(request.sid) == "right":
+        paddles["right"] = data['y']
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    sid = request.sid
+    players.pop(sid, None)
+
+@socketio.on('reset')
+def handle_reset():
+    global ball, score
+    ball = {"x": 300, "y": 200, "vx": 4, "vy": 3}
+    score = {"left": 0, "right": 0}
+    socketio.emit('state', {"ball": ball, "paddles": paddles, "score": score})
+
+def game_loop():
+    while True:
+        ball["x"] += ball["vx"]
+        ball["y"] += ball["vy"]
+
+        if ball["y"] <= 0 or ball["y"] >= 400:
+            ball["vy"] *= -1
+
+        if ball["x"] <= 20 and paddles["left"] <= ball["y"] <= paddles["left"] + 80:
+            ball["vx"] *= -1
+        elif ball["x"] >= 580 and paddles["right"] <= ball["y"] <= paddles["right"] + 80:
+            ball["vx"] *= -1
+
+        if ball["x"] < 0:
+            score["right"] += 1
+            ball.update({"x": 300, "y": 200, "vx": -4, "vy": 3})
+        elif ball["x"] > 600:
+            score["left"] += 1
+            ball.update({"x": 300, "y": 200, "vx": 4, "vy": 3})
+
+        socketio.emit('state', {"ball": ball, "paddles": paddles, "score": score})
+        socketio.sleep(1 / 60)
+
+socketio.start_background_task(game_loop)
     
 # ========== Main ==========
 if __name__ == "__main__":

@@ -18,7 +18,7 @@ function showPage(id) {
   document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
   document.getElementById(`btn${id.charAt(0).toUpperCase() + id.slice(1)}`).classList.add('active');
 }
-// Tambah log ke area <pre>
+// Tambah log ke area aktif
 function appendLog(target, message) {
   target.innerHTML += message + "\n";
   target.scrollTop = target.scrollHeight;
@@ -36,12 +36,10 @@ function hideLoading() {
   currentProcess = null;
 }
 function stopProcessGlobal() {
-  if (currentProcess === "print") {
-    document.getElementById("printStatus").innerText += "\n⛔ Proses print dihentikan (manual)";
-  } else {
-    socket.emit("stop");
-  }
+  socket.emit("stop");
   hideLoading();
+  startButton.disabled = false;
+  appendLog("❌ Proses dihentikan.");
 }
 
 /* ===== CEK STOK LPG ===== */
@@ -50,10 +48,11 @@ function startProcess() {
   logHome.innerHTML = "⏳ Memulai proses...\n";
   startButton.disabled = true;
   socket.emit("start_check", { sheet_index: index });
-  showLoading();
 }
 function stopProcess() {
   socket.emit("stop");
+  appendLog(logHome, "❌ Proses dihentikan.");
+  startButton.disabled = false;
 }
 socket.on("checker_log", message => appendLog(logHome, message));
 socket.on("checker_done", () => {
@@ -73,6 +72,8 @@ function startMap() {
 }
 function stopMap() {
   socket.emit("stop");
+  appendLog(logMap, "❌ Proses dihentikan.");
+  startButton.disabled = false;
 }
 socket.on("map_log", message => appendLog(logMap, message));
 socket.on("map_done", () => appendLog(logMap, "✅ Proses map selesai."));
@@ -89,8 +90,9 @@ function startCollect() {
 }
 function stopCollect() {
   socket.emit("stop");
+  appendLog(logCollect, "❌ Proses dihentikan.");
+  startButton.disabled = false;
 }
-
 socket.on("collect_log", message => appendLog(logCollect, message));
 socket.on("collect_done", () => appendLog(logCollect, "✅ Proses collect selesai."));
 
@@ -156,7 +158,7 @@ function clearLogbookData() {
   document.querySelector("#uploadForm input[type='file']").value = "";
 }
 
-/* ===== DOWNLOAD IMG ===== */
+/* ===== Compress IMG ===== */
 document.addEventListener("DOMContentLoaded", () => {
   // Kompres Foto
   const compressForm = document.getElementById("compressForm");
@@ -349,3 +351,38 @@ document.addEventListener("DOMContentLoaded", () => {
     URL.revokeObjectURL(url);
   });
 });
+
+// Tampilan Mobile
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+const toggleBtn = document.getElementById('menuToggle');
+  const nav = document.getElementById('sidebarNav');
+
+  toggleBtn.addEventListener('click', () => {
+    nav.classList.toggle('active');
+  });
+
+  // Navigasi antar page (opsional jika kamu pakai `.page`)
+  document.querySelectorAll(".sidebar button").forEach(link => {
+    link.addEventListener("click", () => {
+      // Tutup nav di mobile
+      if (window.innerWidth <= 768) {
+        nav.classList.remove("active");
+      }
+
+      // Highlight tombol
+      document.querySelectorAll(".sidebar button").forEach(btn => btn.classList.remove("active"));
+      link.classList.add("active");
+
+      // Tampilkan halaman terkait
+      const targetPage = link.getAttribute("data-page");
+      document.querySelectorAll(".page").forEach(page => {
+        if (page.id === targetPage) {
+          page.classList.add("active");
+        } else {
+          page.classList.remove("active");
+        }
+      });
+    });
+  });
